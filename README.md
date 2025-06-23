@@ -21,8 +21,7 @@ Siga os passos abaixo para configurar e executar o projeto em sua máquina local
 Primeiro, clone este repositório para a sua máquina.
 
 ```bash
-git clone <URL_DO_SEU_REPOSITORIO_GIT>
-cd <NOME_DA_PASTA_DO_PROJETO>
+git clone https://github.com/K3yNet/AI-Car-Detector.git
 ```
 
 #### 2. Criar e Ativar o Ambiente Virtual
@@ -89,14 +88,8 @@ A maneira mais fácil de testar a API é através da documentação interativa (
 
 3.  **Abra a Interface de Teste:** Clique no botão cinza **"Try it out"**.
 
-    ![Botão 'Try it out'](https://i.imgur.com/L7EwE7s.png)
-
 4.  **Envie uma Imagem:** Na seção "Parameters", um botão **"Choose File"** aparecerá. Clique nele para selecionar uma imagem (JPG ou PNG) do seu computador.
-
-    ![Botão 'Choose File'](https://i.imgur.com/V9KzE6U.png)
 
 5.  **Execute:** Clique no botão azul **"Execute"**. A API irá processar a imagem.
 
 6.  **Veja o Resultado:** Role a página para baixo até a seção **"Server response"**. Lá você encontrará a resposta em formato JSON, indicando se um carro foi detectado (`"car_detected": true/false`) e os detalhes de todos os objetos encontrados.
-
-    ![Exemplo de Resposta](https://i.imgur.com/kPChJ4C.png)
