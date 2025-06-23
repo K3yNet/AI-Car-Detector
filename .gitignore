@@ -1,0 +1,76 @@
+# Byte-code e arquivos de cache do Python
+# ----------------------------------------
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+
+# Ambientes Virtuais (venv)
+# ----------------------------------------
+# Pastas de ambiente virtual mais comuns
+/venv/
+/.venv/
+/env/
+/.env/
+/virtualenv/
+/venv.*.*/
+
+
+# Arquivos de IDE e editores de código
+# ----------------------------------------
+# VS Code
+.vscode/
+# PyCharm
+.idea/
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+# Jupyter Notebook
+.ipynb_checkpoints/
+
+
+# Arquivos de configuração de ambiente
+# NUNCA envie arquivos com senhas, tokens ou chaves de API!
+# ----------------------------------------
+.env
+.env.*
+*.env
+secrets.ini
+secrets.json
+
+
+# Arquivos de instalação e distribuição do Python
+# ----------------------------------------
+/build/
+/dist/
+/downloads/
+/eggs/
+*.egg-info/
+*.egg
+
+
+# Relatórios de testes e cobertura de código
+# ----------------------------------------
+.pytest_cache/
+.coverage
+.coverage.*
+/htmlcov/
+nosetests.xml
+coverage.xml
+pytest-report.html
+
+
+# Logs
+# ----------------------------------------
+*.log
+logs/
+*.log.*
+
+
+# Arquivos de sistema operacional
+# ----------------------------------------
+# macOS
+.DS_Store
+# Windows
+Thumbs.db
