@@ -1,62 +1,119 @@
 import io
-from fastapi import FastAPI, File, UploadFile, HTTPException
-from PIL import Image
-from transformers import pipeline
 import json
+import base64
+import time
+import sys
+import datetime
+from PIL import Image, ImageDraw, ImageFont
 
-print("Carregando o modelo de detecção de objetos...")
-detector = pipeline("object-detection", model="facebook/detr-resnet-50")
-print("Modelo carregado com sucesso!")
+from transformers import pipeline
+import paho.mqtt.client as mqtt
 
 
-app = FastAPI(
-    title="API de Detecção de Carros",
-    description="Faça upload de uma imagem e a API dirá se um carro foi detectado.",
-    version="1.0.0"
-)
+MQTT_BROKER = "localhost"
+MQTT_PORT = 1883
+MQTT_TOPIC_IMAGENS = "esp32/camera/picture"
+MQTT_TOPIC_RESULTADOS = "esp32/ai_api"
 
-def analisar_imagem(img: Image.Image, confianca_minima: float = 0.9):
+
+def desenhar_caixas_e_rotulos(img: Image.Image, detalhes_analise: list) -> Image.Image:
+    draw = ImageDraw.Draw(img)
+    try:
+        font = ImageFont.truetype("arial.ttf", 15)
+    except IOError:
+        font = ImageFont.load_default()
+
+    for obj in detalhes_analise:
+        box = obj['box']
+        coordenadas = [box['xmin'], box['ymin'], box['xmax'], box['ymax']]
+        cor = "yellow"
+        if obj['label'] == 'car':
+            cor = "lime"
+        elif obj['label'] == 'bus':
+            cor = 'orange'
+        
+        draw.rectangle(coordenadas, outline=cor, width=3)
+        texto_rotulo = f"{obj['label']}: {obj['score']:.2f}"
+        posicao_texto = (box['xmin'], box['ymin'] - 15)
+        draw.text(posicao_texto, texto_rotulo, fill=cor, font=font)
+        
+    return img
+
+def analisar_imagem(img: Image.Image, confianca_minima: float = 0.5):
+    veiculos_alvo = ['car', 'bus', 'motorcycle'] 
+
     if img.mode != "RGB":
         img = img.convert("RGB")
         
     resultados_raw = detector(img)
     
-    resultados_limpos = [
+    resultados_filtrados = [
         {
             "score": round(obj["score"], 4),
             "label": obj["label"],
             "box": obj["box"]
-        } for obj in resultados_raw
+        } for obj in resultados_raw if obj['label'] in veiculos_alvo and obj['score'] >= confianca_minima
     ]
 
-    carro_detectado = False
-    for obj in resultados_limpos:
-        if obj['label'] == 'car' and obj['score'] >= confianca_minima:
-            carro_detectado = True
-            break
-            
-    return {"car_detected": carro_detectado, "details": resultados_limpos}
+    veiculo_detectado = len(resultados_filtrados) > 0
+    
+    return {"vehicle_detected": veiculo_detectado, "details": resultados_filtrados}
 
+def on_connect(client, userdata, flags, rc, properties=None):
+    if rc == 0:
+        client.subscribe(MQTT_TOPIC_IMAGENS)
+    else:
+        print(f"Falha ao conectar ao MQTT, código de retorno: {rc}\n", file=sys.stderr)
 
-@app.post("/detectar-carro/", summary="Detecta objetos em uma imagem enviada")
-async def detectar_objetos_em_imagem(file: UploadFile = File(...)):
-
-    if file.content_type not in ["image/jpeg", "image/png"]:
-        raise HTTPException(status_code=400, detail="Tipo de arquivo inválido. Por favor, envie uma imagem JPG ou PNG.")
-        
+def on_message(client, userdata, msg):
     try:
-        conteudo_arquivo = await file.read()
+        imagem_original = Image.open(io.BytesIO(msg.payload))
+        resultado_analise = analisar_imagem(imagem_original)
+        
+        if resultado_analise["vehicle_detected"]:
+            imagem_com_caixas = desenhar_caixas_e_rotulos(
+                imagem_original.copy(), 
+                resultado_analise["details"]
+            )
+            
+            # A linha de exibição continua aqui, comentada, como solicitado.
+            # imagem_com_caixas.show(title="Imagem Processada com Detecção")
 
-        imagem = Image.open(io.BytesIO(conteudo_arquivo))
-        
-        resultado_analise = analisar_imagem(imagem)
-        
-        return resultado_analise
+            buffer = io.BytesIO()
+            imagem_com_caixas.save(buffer, format="JPEG")
+            bytes_imagem = buffer.getvalue()
+
+            imagem_base64 = base64.b64encode(bytes_imagem).decode('utf-8')
+            timestamp_atual = datetime.datetime.now().isoformat()
+            
+            payload_resposta = {
+                "timestamp_utc": timestamp_atual,
+                "image_processed_base64": imagem_base64
+            }
+
+            client.publish(MQTT_TOPIC_RESULTADOS, json.dumps(payload_resposta))
 
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Ocorreu um erro ao processar a imagem: {e}")
+        print(f"[!] Erro ao processar a imagem: {e}", file=sys.stderr)
 
+if __name__ == "__main__":
+    try:
+        detector = pipeline("object-detection", model="facebook/detr-resnet-50")
+    except Exception as e:
+        print(f"Falha fatal ao carregar o modelo de IA: {e}", file=sys.stderr)
+        sys.exit(1)
 
-@app.get("/")
-def read_root():
-    return {"status": "API online. Acesse /docs para ver a documentação."}
+    mqtt_client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
+    mqtt_client.on_connect = on_connect
+    mqtt_client.on_message = on_message
+
+    try:
+        mqtt_client.connect(MQTT_BROKER, MQTT_PORT, 60)
+    except Exception as e:
+        print(f"Não foi possível conectar ao broker MQTT em {MQTT_BROKER}:{MQTT_PORT}. Erro: {e}", file=sys.stderr)
+        sys.exit(1)
+
+    try:
+        mqtt_client.loop_forever()
+    except KeyboardInterrupt:
+        mqtt_client.disconnect()
