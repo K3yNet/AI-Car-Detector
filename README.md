@@ -123,10 +123,12 @@ O dashboard é uma página estática.
 *(Aqui você pode adicionar screenshots do dashboard funcionando, uma foto do seu setup com os ESP32s, ou até um GIF do sistema em ação)*
 
 **Dashboard em Operação:**
-![Placeholder para o Dashboard](https://placehold.co/800x450/2c3e50/ecf0f1?text=Dashboard+Web+Aqui)
+![Captura de ecrã de 2025-07-07 00-17-22](https://github.com/user-attachments/assets/91416ebd-abf0-4399-9946-35ec7c533a4b)
+![Captura de ecrã de 2025-07-07 00-14-03](https://github.com/user-attachments/assets/e4250ffa-589a-45e1-9cb2-53693bda3530)
 
 **Setup Físico:**
-![Placeholder para o Hardware](https://placehold.co/800x450/34495e/ecf0f1?text=Foto+do+Hardware+Aqui)
+![esp32](https://github.com/user-attachments/assets/8674170c-beed-4e03-b97d-66a65d080926)
+
 
 
 ## 📄 Licença
