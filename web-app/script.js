@@ -1,5 +1,5 @@
 // script.js
-const BROKER_IP = "192.168.15.17";
+const BROKER_IP = ""; // Endereço IP do broker MQTT
 const WEBSOCKET_PORT = 9001;
 const TOPIC_IMAGEM = "esp32/ai_api";
 const TOPIC_SEMAFORO_PRINCIPAL = "esp32/semaforo_state/main_avenue";

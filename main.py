@@ -7,7 +7,7 @@ from PIL import Image, ImageDraw, ImageFont
 from transformers import pipeline
 import paho.mqtt.client as mqtt
 
-MQTT_BROKER = "localhost"
+MQTT_BROKER = "" # Endereço IP do broker MQTT
 MQTT_PORT = 1883
 MQTT_TOPIC_IMAGENS = "esp32/camera/picture"
 MQTT_TOPIC_RESULTADOS = "esp32/ai_api"
