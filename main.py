@@ -91,7 +91,7 @@ def on_message(client, userdata, msg):
                 "image_processed_base64": imagem_base64
             }
 
-            client.publish(MQTT_TOPIC_RESULTADOS, json.dumps(payload_resposta))
+            client.publish(MQTT_TOPIC_RESULTADOS, json.dumps(payload_resposta), retain=True)
 
     except Exception as e:
         print(f"[!] Erro ao processar a imagem: {e}", file=sys.stderr)
