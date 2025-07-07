@@ -33,11 +33,11 @@ O fluxo de dados do sistema segue um padrão de publicação e inscrição (Pub/
 
 ```mermaid
 graph TD
-    A["👁️ ESP32-CAM"] -- "1. Publica Foto [JPEG]\ntópico: esp32/camera/picture" --> B((🌐 Broker MQTT));
-    B -- "2. Notifica Worker" --> C["🧠 Worker IA (Python)"];
-    C -- "3. Analisa e Publica Resultado [JSON + Imagem Base64]\ntópico: esp32/ai_api" --> B;
-    B -- "4. Notifica Assinantes do Resultado" --> D["💡 ESP32 Semáforo"];
-    B -- "4. Notifica Assinantes do Resultado" --> E["🖥️ Dashboard Web"];
+    A["👁️ ESP32-CAM"] -- "(1) Publica Foto [JPEG]\ntópico: esp32/camera/picture" --> B((🌐 Broker MQTT));
+    B -- "(2) Notifica Worker" --> C["🧠 Worker IA (Python)"];
+    C -- "(3) Analisa e Publica Resultado [JSON + Imagem Base64]\ntópico: esp32/ai_api" --> B;
+    B -- "(4) Notifica Assinantes do Resultado" --> D["💡 ESP32 Semáforo"];
+    B -- "(4) Notifica Assinantes do Resultado" --> E["🖥️ Dashboard Web"];
 ```
 
 * **O Olho (`ESP32-CAM`):** Captura imagens do tráfego e as publica no broker.
