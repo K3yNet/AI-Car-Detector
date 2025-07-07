@@ -120,8 +120,6 @@ O dashboard é uma página estática.
 
 ## 🖼️ Galeria
 
-*(Aqui você pode adicionar screenshots do dashboard funcionando, uma foto do seu setup com os ESP32s, ou até um GIF do sistema em ação)*
-
 **Dashboard em Operação:**
 ![Captura de ecrã de 2025-07-07 00-17-22](https://github.com/user-attachments/assets/91416ebd-abf0-4399-9946-35ec7c533a4b)
 ![Captura de ecrã de 2025-07-07 00-14-03](https://github.com/user-attachments/assets/e4250ffa-589a-45e1-9cb2-53693bda3530)
