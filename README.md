@@ -60,7 +60,7 @@ Siga os passos para configurar e executar o ecossistema completo.
 O broker é o coração do sistema. Usamos Docker para subir um contêiner Mosquitto de forma fácil e isolada.
 
 ```bash
-# Na raiz do projeto, execute:
+# No diretório mosquitto/ execute:
 docker-compose up -d
 ```
 Isso iniciará o broker Mosquitto, que estará escutando na porta `1883` (MQTT padrão) e `9001` (WebSockets).
@@ -69,7 +69,7 @@ Isso iniciará o broker Mosquitto, que estará escutando na porta `1883` (MQTT p
 Este serviço irá consumir as imagens e processá-las.
 
 ```bash
-# Crie e ative um ambiente virtual
+# Crie e ative um ambiente virtual dentro do diretório ai_processor/
 python -m venv venv
 source venv/bin/activate  # No Linux/macOS
 # venv\Scripts\activate    # No Windows
@@ -85,13 +85,13 @@ O worker irá carregar o modelo de IA e se conectar ao broker, aguardando por im
 #### 3. Configuração dos ESP32
 Você precisará de dois ESP32: um com uma câmera (ESP32-CAM) e outro para controlar os LEDs do semáforo.
 
-1.  Abra os arquivos `camera.ino` e `semaforo.ino` na sua IDE (Arduino ou PlatformIO).
+1.  Abra os arquivos `esp32_cam.ino` e `esp32_wifi_lora.ino` na sua IDE (Arduino ou PlatformIO).
 2.  **Edite as variáveis** no topo de cada arquivo com as credenciais da sua rede Wi-Fi e o endereço IP do computador que está rodando o broker MQTT.
 3.  Compile e envie o código para cada ESP32 correspondente.
 4.  Abra o Monitor Serial para acompanhar os logs e garantir que eles se conectaram ao Wi-Fi and MQTT.
 
 #### 4. Executando o Dashboard Web
-O dashboard é uma página estática.
+O dashboard é uma página estática. Dentro do diretório web-app/
 
 1.  Edite o arquivo `script.js` e certifique-se de que a variável `BROKER_IP` contém o endereço IP correto do seu broker.
 2.  Inicie um servidor web simples na pasta do projeto:
