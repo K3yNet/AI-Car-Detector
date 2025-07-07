@@ -1,20 +1,16 @@
 import io
 import json
 import base64
-import time
 import sys
 import datetime
 from PIL import Image, ImageDraw, ImageFont
-
 from transformers import pipeline
 import paho.mqtt.client as mqtt
-
 
 MQTT_BROKER = "localhost"
 MQTT_PORT = 1883
 MQTT_TOPIC_IMAGENS = "esp32/camera/picture"
 MQTT_TOPIC_RESULTADOS = "esp32/ai_api"
-
 
 def desenhar_caixas_e_rotulos(img: Image.Image, detalhes_analise: list) -> Image.Image:
     draw = ImageDraw.Draw(img)
@@ -76,9 +72,6 @@ def on_message(client, userdata, msg):
                 resultado_analise["details"]
             )
             
-            # A linha de exibição continua aqui, comentada, como solicitado.
-            # imagem_com_caixas.show(title="Imagem Processada com Detecção")
-
             buffer = io.BytesIO()
             imagem_com_caixas.save(buffer, format="JPEG")
             bytes_imagem = buffer.getvalue()

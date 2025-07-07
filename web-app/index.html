@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monitor Semáforo IoT</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js"></script>
+</head>
+
+<body>
+    <header>
+        <h1>Monitor Semáforo IoT</h1>
+    </header>
+    <main>
+        <div class="semaforos-container">
+            <div id="semaforo-principal" class="card semaforo desconhecido">
+                <h2>Avenida Principal</h2>
+                <p class="status">Conectando...</p>
+            </div>
+            <div id="semaforo-transversal" class="card semaforo desconhecido">
+                <h2>Rua Transversal</h2>
+                <p class="status">Conectando...</p>
+            </div>
+        </div>
+        <div id="imagem-card" class="card imagem">
+            <div class="imagem-wrapper">
+                <img id="imagem-rua" src="" alt="Imagem da rua com detecção">
+                <div id="imagem-overlay" class="overlay">
+                    <div class="loader"></div>
+                    <p>Aguardando imagem...</p>
+                </div>
+                <div id="timestamp" class="timestamp"></div>
+            </div>
+        </div>
+        <button id="force-trigger-btn" class="trigger-button">Forçar Nova Detecção</button>
+    </main>
+    <script src="script.js"></script>
+</body>
+
+</html>

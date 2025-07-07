@@ -1,40 +1,31 @@
 #include "esp_camera.h"
-#include "soc/soc.h"           // Disable brownout detector
-#include "soc/rtc_cntl_reg.h"  // Disable brownout detector
-#include "driver/rtc_io.h"     // Disable brownout detector
+#include "soc/soc.h"
+#include "soc/rtc_cntl_reg.h"
+#include "driver/rtc_io.h"
 #include <WiFi.h>
 #include <PubSubClient.h>
 
-//Informacoes da rede WiFi
-// const char* ssid     = "CangoDama2.4G";
-// const char* password = "a1b2c3d4e5f6";
 const char* ssid = "CangoDama2.4G";
 const char* password = "a1b2c3d4e5f6";
 
-// --- Configurações do Broker MQTT ---
-// const char* mqtt_broker = "192.168.15.12";
 const char* mqtt_broker = "192.168.15.17";
-const int mqtt_port = 1883;// Porta padrao MQTT sem segurança
-const char* mqtt_client_id = "ESP32_CAM_1"; // ID único para o seu cliente MQTT
-const char* mqtt_user = ""; // Usuário MQTT criado no Broker
+const int mqtt_port = 1883;
+const char* mqtt_client_id = "ESP32_CAM_1";
+const char* mqtt_user = "";
 const char* mqtt_pass = "";
 
-// --- Tópicos MQTT ---
-const char* topic_picture = "esp32/camera/picture"; // Tópico para publicar a temperatura
+const char* topic_picture = "esp32/camera/picture";
 
-// --- Variáveis de controle de tempo ---
 long lastPhotoTime = 0;
-const long photoInterval = 5000; // Intervalo de publicação (5 segundos)
+const long photoInterval = 5000;
 
-#define LED_BUILTIN 4 
+#define LED_BUILTIN 4
 
-// CAMERA_MODEL_AI_THINKER
 #define PWDN_GPIO_NUM     32
 #define RESET_GPIO_NUM    -1
 #define XCLK_GPIO_NUM      0
 #define SIOD_GPIO_NUM     26
 #define SIOC_GPIO_NUM     27
-
 #define Y9_GPIO_NUM       35
 #define Y8_GPIO_NUM       34
 #define Y7_GPIO_NUM       39
@@ -50,8 +41,6 @@ const long photoInterval = 5000; // Intervalo de publicação (5 segundos)
 WiFiClient espClient;
 PubSubClient client(espClient);
 
-// ----- WIFI FUNCTIONS -----
-
 void wifi_connect(){
   Serial.print("Conectando a ");
   Serial.println(ssid);
@@ -66,11 +55,7 @@ void wifi_connect(){
   Serial.println(WiFi.localIP());
 }
 
-// ----- MQTT FUNCTIONS -----
-// Retorno de chamada para o cliente MQTT
 void callback(char* topic, byte* payload, unsigned int length) {
-  // Esta função é chamada quando o cliente MQTT recebe uma mensagem em um tópico inscrito.
-  // Neste exemplo, o ESP32-CAM apenas publica, então esta função pode permanecer vazia.
   Serial.print("Mensagem recebida no tópico: ");
   Serial.print(topic);
   Serial.print(". Mensagem: ");
@@ -80,7 +65,6 @@ void callback(char* topic, byte* payload, unsigned int length) {
   Serial.println();
 }
 
-// Função para reconectar ao broker MQTT
 void reconnect() {
   while (!client.connected()) {
     Serial.print("Tentando conexão MQTT...");
@@ -95,9 +79,8 @@ void reconnect() {
   }
 }
 
-// ----- CAMERA FUNCTIONS -----
 void setup_camera(){
-  WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0); // Disable brownout detector
+  WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0);
 
   camera_config_t config;
   config.ledc_channel = LEDC_CHANNEL_0;
@@ -119,21 +102,18 @@ void setup_camera(){
   config.pin_pwdn = PWDN_GPIO_NUM;
   config.pin_reset = RESET_GPIO_NUM;
   config.xclk_freq_hz = 20000000;
-  config.pixel_format = PIXFORMAT_JPEG; // Or PIXFORMAT_RGB565, PIXFORMAT_GRAYSCALE, etc.
+  config.pixel_format = PIXFORMAT_JPEG;
   
-  // If PSRAM is available, you can use larger frame sizes
   if(psramFound()){
-    // config.frame_size = FRAMESIZE_UXGA; // 1600x1200
-    config.frame_size = FRAMESIZE_SVGA; // 320x240
-    config.jpeg_quality = 20;           // 0-63, lower is higher quality
-    config.fb_count = 1;                // Two frame buffers for smoother operation
+    config.frame_size = FRAMESIZE_SVGA;
+    config.jpeg_quality = 20;
+    config.fb_count = 1;
   } else {
-    config.frame_size = FRAMESIZE_QVGA; // 800x600 (without PSRAM)
+    config.frame_size = FRAMESIZE_QVGA;
     config.jpeg_quality = 20;
     config.fb_count = 1;
   }
 
-  // Camera init
   esp_err_t err = esp_camera_init(&config);
   if (err != ESP_OK) {
     Serial.printf("Camera init failed with error 0x%x", err);
@@ -141,10 +121,7 @@ void setup_camera(){
   }
 }
 
-// ----- CONFIGURACAO INICIAL -----
-
 void setup() {
-
   Serial.begin(115200);
   Serial.setDebugOutput(true);
   Serial.println();
@@ -152,10 +129,8 @@ void setup() {
   digitalWrite(LED_BUILTIN, LOW);
 
   setup_camera();
-
   wifi_connect();
 
-  // Configura o cliente MQTT
   client.setServer(mqtt_broker, mqtt_port);
   client.setCallback(callback);
   client.setBufferSize(32768);
@@ -163,12 +138,10 @@ void setup() {
   Serial.println("Done.");
 }
 
-// ----- LOOP PRINCIPAL -----
-
 void loop() {
-  client.loop(); // Mantém conexão com broker
+  client.loop();
   if (!client.connected()) {
-    reconnect(); // Se desconectado, tenta reconectar e subscrever novamente
+    reconnect();
   }
 
   unsigned long currentMillis = millis();
@@ -177,17 +150,13 @@ void loop() {
     lastPhotoTime = currentMillis;
 
     Serial.println("Capturando foto...");
-    // digitalWrite(LED_BUILTIN, HIGH);
     camera_fb_t * fb = esp_camera_fb_get();
     if (!fb) {
       Serial.println("Falha na captura da câmera");
       return;
     }
 
-    // A imagem já está em JPEG devido à configuração da câmera
-    // Então, podemos publicar diretamente o buffer
     Serial.printf("Foto capturada, tamanho: %u bytes\n", fb->len);
-
     delay(10);
     if (client.publish(topic_picture, (const uint8_t*)fb->buf, fb->len)) {
       Serial.println("Foto publicada com sucesso no MQTT!");
@@ -197,7 +166,6 @@ void loop() {
       delay(500);
     }
     digitalWrite(LED_BUILTIN, LOW);
-
-    esp_camera_fb_return(fb); // Libera o buffer da câmera
+    esp_camera_fb_return(fb);
   }
 }
