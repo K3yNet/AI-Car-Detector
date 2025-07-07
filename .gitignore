@@ -9,12 +9,12 @@ __pycache__/
 # Ambientes Virtuais (venv)
 # ----------------------------------------
 # Pastas de ambiente virtual mais comuns
-/venv/
-/.venv/
-/env/
-/.env/
-/virtualenv/
-/venv.*.*/
+ai_processor/venv/
+ai_processor/.venv/
+ai_processor/env/
+ai_processor/.env/
+ai_processor/virtualenv/
+ai_processor/venv.*.*/
 
 
 # Arquivos de IDE e editores de código
