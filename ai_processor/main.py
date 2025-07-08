@@ -7,10 +7,11 @@ from PIL import Image, ImageDraw, ImageFont
 from transformers import pipeline
 import paho.mqtt.client as mqtt
 
-MQTT_BROKER = "" # Endereço IP do broker MQTT
+MQTT_BROKER = "192.168.215.82" # Endereço IP do broker MQTT
 MQTT_PORT = 1883
 MQTT_TOPIC_IMAGENS = "esp32/camera/picture"
-MQTT_TOPIC_RESULTADOS = "esp32/ai_api"
+MQTT_TOPIC_PUBLISHER_WEB = "esp32/ai_api/web"
+MQTT_TOPIC_PUBLISHER_ESP = "esp32/ai_api/esp_semaforo"
 
 def desenhar_caixas_e_rotulos(img: Image.Image, detalhes_analise: list) -> Image.Image:
     draw = ImageDraw.Draw(img)
@@ -84,7 +85,8 @@ def on_message(client, userdata, msg):
                 "image_processed_base64": imagem_base64
             }
 
-            client.publish(MQTT_TOPIC_RESULTADOS, json.dumps(payload_resposta), retain=True)
+            client.publish(MQTT_TOPIC_PUBLISHER_WEB, json.dumps(payload_resposta))
+            client.publish(MQTT_TOPIC_PUBLISHER_ESP, json.dumps({"car_detected": True}))
 
     except Exception as e:
         print(f"[!] Erro ao processar a imagem: {e}", file=sys.stderr)

@@ -1,7 +1,8 @@
 // script.js
-const BROKER_IP = ""; // Endereço IP do broker MQTT
+const BROKER_IP = "192.168.215.82"; // Endereço IP do broker MQTT
 const WEBSOCKET_PORT = 9001;
-const TOPIC_IMAGEM = "esp32/ai_api";
+const TOPIC_IMAGEM = "esp32/ai_api/web";
+const MQTT_TOPIC_PUBLISHER_ESP = "esp32/ai_api/esp_semaforo"
 const TOPIC_SEMAFORO_PRINCIPAL = "esp32/semaforo_state/main_avenue";
 const TOPIC_SEMAFORO_TRANSVERSAL = "esp32/semaforo_state/cross_street";
 
@@ -123,7 +124,7 @@ function forcarDeteccao() {
         return;
     }
     const message = new Paho.MQTT.Message("");
-    message.destinationName = TOPIC_IMAGEM;
+    message.destinationName = MQTT_TOPIC_PUBLISHER_ESP;
     client.send(message);
     alert("Sinal para forçar nova detecção foi enviado!");
 }

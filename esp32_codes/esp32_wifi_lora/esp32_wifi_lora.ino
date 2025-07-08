@@ -2,12 +2,12 @@
 #include <PubSubClient.h>
 #include <ArduinoJson.h>
 
-const char* ssid = ""; // SSID do WiFi
-const char* password = ""; // Senha do WiFi, deixe vazio se não houver senha
+const char* ssid = "IoT-Gustavo"; // SSID do WiFi
+const char* password = "senha123"; // Senha do WiFi, deixe vazio se não houver senha
 
-const char* mqtt_server = ""; // Endereço IP do broker MQTT
+const char* mqtt_server = "192.168.215.82"; // Endereço IP do broker MQTT
 const int mqtt_port = 1883;
-const char* mqtt_topic_subscribe = "esp32/ai_api";
+const char* mqtt_topic_subscribe = "esp32/ai_api/esp_semaforo";
 const char* mqtt_topic_publish_state_main_avenue = "esp32/semaforo_state/main_avenue";
 const char* mqtt_topic_publish_state_cross_street = "esp32/semaforo_state/cross_street";
 const char* mqtt_topic_control = "esp32/control_semaforo";

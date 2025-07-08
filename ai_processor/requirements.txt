@@ -1,6 +1,6 @@
 asttokens==3.0.0
 attrs==21.2.0
-bcc==0.18.0
+bcc==0.1.8
 beautifulsoup4==4.13.4
 blinker==1.4
 Brlapi==0.8.3

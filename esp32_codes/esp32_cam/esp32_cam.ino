@@ -5,10 +5,10 @@
 #include <WiFi.h>
 #include <PubSubClient.h>
 
-const char* ssid = ""; // SSID do WiFi
-const char* password = ""; // Senha do WiFi, deixe vazio se não houver senha
+const char* ssid = "IoT-Gustavo"; // SSID do WiFi
+const char* password = "senha123"; // Senha do WiFi, deixe vazio se não houver senha
 
-const char* mqtt_broker = ""; // Endereço IP do broker MQTT
+const char* mqtt_broker = "192.168.215.82"; // Endereço IP do broker MQTT
 const int mqtt_port = 1883;
 const char* mqtt_client_id = "ESP32_CAM_1";
 const char* mqtt_user = "";
